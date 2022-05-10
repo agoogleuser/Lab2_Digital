@@ -10,15 +10,18 @@ Ns= 10000;            % Number of samples
 timeSequence = 3*T;   % Total time Period which the simulation will calculate
 fs =Ns/timeSequence;  % Sampling Frequency
 
-%Creating Signal 1 and Signal 2
+%Creating Signal 1 and Signal 2 and converting them to frequency domain
 [signal1_t, t] = createSquareSignal(0,T,timeSequence, Ns);
 [signal2_t, ~]= createSquareSignal(T, 2*T, timeSequence, Ns);
 t=t*1e6;
-%Plotting Signal 1 and Signal 2 in time domain
+signal1_f = fftshift(fft(signal1_t));
+signal2_f = fftshift(fft(signal2_t));
+f = (-length(signal1_f)/2:length(signal1_f)/2-1) * (fs/Ns);
 
+%Plotting Signal 1 in time and frequency domain
 figure
 %figure(figurenum++);
-subplot(2,2,1)
+subplot(1,2,1)
 plot(t, signal1_t)
 grid on;
 xlim([0 60])
@@ -27,34 +30,36 @@ title("Signal 1 in time domain");
 xlabel("time (us)");
 ylabel("Amplitude (v)");
 
-subplot(2,2,3);
-plot(t, signal2_t)
-grid on;
-xlim([0 60])
-ylim([0 1.5]);
-title("Signal 2 in time domain");
-xlabel("time (us)");
-ylabel("Amplitude (v)");
-
-%Converting and Plotting Signal 1 and Signal 2 in Frequency Domain
-signal1_f = fftshift(fft(signal1_t));
-signal2_f = fftshift(fft(signal2_t));
-f = (-length(signal1_f)/2:length(signal1_f)/2-1) * (fs/Ns);
-
-subplot(2,2,2);
+subplot(1,2,2);
 plot(f/1e3, abs(signal1_f));
 xlim([-200 200]);
 title("Signal 1 in Frequency Domain");
 xlabel("frequency (kHz)");
 ylabel("Amplitude (V)");
 
-subplot(2,2,4)
-plot(f/1e3, abs(signal2_f));
+%Plotting Signal 1 and Signal 2 in time and Frequency Domain
+
+figure
+subplot(1,2,1);
+plot(t, signal1_t, t, signal2_t);
+grid on;
+xlim([0 60]);
+ylim([0 1.5]);
+title("Signal 1 and 2 in time domain");
+legend("Signal 1", "signal 2");
+xlabel("time (us)");
+ylabel("Amplitude (v)");
+
+subplot(1,2,2)
+plot(f/1e3, abs(signal1_f), f/1e3, abs(signal2_f), '--');
+legend("Signal 1", "signal 2");
 grid on
 xlim([-200 200]);
-title("Signal 2 in Frequency Domain");
+ylim([0 4000]);
+title("Signal 1 and 2 in Frequency Domain");
 xlabel("frequency (kHz)");
 ylabel("Amplitude (V)");
+
 
 %Passing Signal 1 only into the channel, then plotting it in time and frequency domains.
 [output1_t, output1_f] = channel_A(true,BW, f, signal1_t); % true means print Channel Frequency response
