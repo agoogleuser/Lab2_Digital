@@ -1,19 +1,19 @@
 %%PART 1: ISI effect in Band-Limited Channel;
 
-%Adding the folder path of the functions in order to run it.s
+%Adding the folder path of the functions in order to run it.
 addpath(genpath("Functions_Part1"));
 
 figurenum=1;          % To make numbering figures easter
 BW = 100e3;           % Channel Bandwidth
-T = 2 / BW;           % BitRate
+T = 2 / BW;           % Pulse On time
 Ns= 10000;            % Number of samples
 timeSequence = 3*T;   % Total time Period which the simulation will calculate
 fs =Ns/timeSequence;  % Sampling Frequency
 
 %Creating Signal 1 and Signal 2 and converting them to frequency domain
 [signal1_t, t] = createSquareSignal(0,T,timeSequence, Ns);
-[signal2_t, ~]= createSquareSignal(T, 2*T, timeSequence, Ns);
-t=t*1e6;
+[signal2_t, ~] = createSquareSignal(T, 2*T, timeSequence, Ns);
+t=t*1e6; %converting time to microseconds.
 signal1_f = fftshift(fft(signal1_t));
 signal2_f = fftshift(fft(signal2_t));
 f = (-length(signal1_f)/2:length(signal1_f)/2-1) * (fs/Ns);
@@ -42,9 +42,9 @@ ylabel("Amplitude (V)");
 figure
 subplot(1,2,1);
 plot(t, signal1_t, t, signal2_t);
-grid on;
 xlim([0 60]);
 ylim([0 1.5]);
+grid on;
 title("Signal 1 and 2 in time domain");
 legend("Signal 1", "signal 2");
 xlabel("time (us)");
@@ -53,9 +53,9 @@ ylabel("Amplitude (v)");
 subplot(1,2,2)
 plot(f/1e3, abs(signal1_f), f/1e3, abs(signal2_f), '--');
 legend("Signal 1", "signal 2");
-grid on
 xlim([-200 200]);
 ylim([0 4000]);
+grid on
 title("Signal 1 and 2 in Frequency Domain");
 xlabel("frequency (kHz)");
 ylabel("Amplitude (V)");
@@ -120,4 +120,6 @@ grid on
 legend("Signal 1 and 2", "Signal 1", "Signal 2");
 xlabel("frequency (kHz)");
 ylabel("Amplitude (V)");
+
+%TODO : Digital Source and convert it to analog, 1000 sample
 
