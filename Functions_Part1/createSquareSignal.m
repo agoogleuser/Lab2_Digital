@@ -1,6 +1,7 @@
-function [outputSignal, t] = createSquareSignal(timeStart, timeOn, timeEnd, numOfSamples)
+function [outputSignal] = createSquareSignal(timeStart, timeOn, timeVecotr)
 
-  t = linspace(0, timeEnd, numOfSamples);
+  t = timeVecotr;
+  numOfSamples = length(t);
   [~,T_end]   = min(abs(t - timeOn));     %Return the nearest index for the given timeOn in the vector t
   [~,T_start] = min(abs(t - timeStart));
   %T_end = T_end - 1 ;  %optimize it for the output signal
