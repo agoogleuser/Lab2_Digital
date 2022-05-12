@@ -1,8 +1,8 @@
-function [output_t, output_f,filter] = channel_A(BW, frequencyRange, varargin)
+function [output_t, output_f,filter] = channel_A(snr,BW, frequencyRange, varargin)
 
   symbolVector_t = varargin{1}; %%one variable
   inputLength = length(varargin{1});
-  if (nargin >= 1+3) %%two or more variables
+  if (nargin >= 1+4) %%two or more variables
     for i=2:(nargin-3)
       %Check if the input size is the same for each vector input.
       if (length(varargin{i}) ~= inputLength)
@@ -13,7 +13,10 @@ function [output_t, output_f,filter] = channel_A(BW, frequencyRange, varargin)
       symbolVector_t =  symbolVector_t+varargin{i};
     end
   end
-
+  
+  if (snr ~= 0)
+      symbolVector_t = awgn(symbolVector_t , snr , 'measured'); %add noise signal
+  end
   %Creating Filter Response
   [~, F_end]   = min(abs(frequencyRange-BW));   %nearest index of +BW
   [~, F_start] = min(abs(frequencyRange+BW));   %nearest index of -BW
