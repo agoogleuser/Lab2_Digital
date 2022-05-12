@@ -1,4 +1,4 @@
-function outputSequence = pulseShaping(bitsVector, symbol_0, symbol_1)
+function outputSequence = pulseShaping(bitsVector, symbol_0, symbol_1, symbolPeriod, timeVector)
 
     lenSymb = length(symbol_0);
     if (lenSymb ~= length(symbol_1))
@@ -6,16 +6,16 @@ function outputSequence = pulseShaping(bitsVector, symbol_0, symbol_1)
     end
     lenBits = length(bitsVector);
     
-    outputSequence = zeros(1,lenBits*lenSymb);
-    
+    outputSequence = zeros(1,lenSymb);
+    [~, symbolPeriodPlace] = min(abs(timeVector - symbolPeriod)); 
     for i=1:lenBits
         if ( bitsVector(i) == 0)
-            outputSequence((i-1)*lenSymb+1:(i)*lenSymb) = symbol_0;
+            outputSequence = outputSequence + circshift(symbol_0, (i-1)*symbolPeriodPlace);
         else
-            outputSequence((i-1)*lenSymb+1:(i)*lenSymb) = symbol_1;
+            outputSequence = outputSequence + circshift(symbol_1, (i-1)*symbolPeriodPlace);
         end
     end
-    plot(1:length(outputSequence), outputSequence)
+    
 
     %%not efficient but reliable.
 %     outputSequence = [];
