@@ -1,20 +1,19 @@
-function [op_f,f] = Raisedfilter(T,B, Ns)
-    f = 0:ceil(Ns/2)-1;
-    limit1 = (1-B)/(2*T);
-    limit2 = (1+B)/(2*T);
-    const1 = (pi*T/B);
+function op_f = raisedFilter(r,Bandwidth, f)
+    
 
-    op_f = zeros(1, Ns/2);
-    for i = f+1
-        if (i<=limit1)
-            op_f(i) = 1;
-        elseif (i <= limit2 && i > limit1)
-            op_f(i) = 0.5*(1+cos(const1*(f(i) - limit1)));
+%Constants for Equation
+    f0 = Bandwidth/(1+r);
+    fd = Bandwidth-f0;
+    f1 = f0 - fd;
+
+    op_f = zeros(1,length(f));
+    for i = 1:length(f)
+        if (abs(f(i)) < f1)
+            op_f(i)=1;
+        elseif (abs(f(i))>= f1 && abs(f(i)) < Bandwidth)
+            op_f(i) = 0.5*(1+cos(pi/2/fd*(abs(f(i))-f1)));
         else
-            break;
+            op_f(i) = 0;
         end
     end
-    op_f = [op_f(end:-1:2) op_f(1:end) 0];
-    f = -Ns/2:Ns/2-1;
-    
 end
