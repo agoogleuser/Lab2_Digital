@@ -1,4 +1,4 @@
-function [output_t, output_f,filter] = channel_A(snr,BW, frequencyRange, varargin)
+function [output_t, output_f,filter] = channel_A(N0,BW, frequencyRange, varargin)
 
   symbolVector_t = varargin{1}; %%one variable
   inputLength = length(varargin{1});
@@ -13,9 +13,14 @@ function [output_t, output_f,filter] = channel_A(snr,BW, frequencyRange, varargi
       symbolVector_t =  symbolVector_t+varargin{i};
     end
   end
+
+  %Random Noise added, not AWGN
   
-  if (snr ~= 0)
-      symbolVector_t = awgn(symbolVector_t , snr , 'measured'); %add noise signal
+  if (N0 ~= 0)
+%       Noise_segma = sqrt(N0/2);
+%       awgn = randn(1,inputLength)*Noise_segma;
+      awgn = wgn(1, inputLength,N0,'linear');
+      symbolVector_t = symbolVector_t + awgn; %add noise signal
   end
   %Creating Filter Response
   [~, F_end]   = min(abs(frequencyRange-BW));   %nearest index of +BW
