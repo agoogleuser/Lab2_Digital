@@ -250,7 +250,7 @@ xlabel('time (sec)')
 ylabel('Amplitude (v)')
 
 subplot(2,2,3)
-plot(f, abs(signal1_f) + abs(signal2_f))
+plot(f, abs(signal1_f + signal2_f))
 xlim([-2*BW 2*BW]);
 grid on;
 title('Signal 1 and 2 in Frequency Domain')
@@ -473,7 +473,7 @@ xlabel('time (sec)')
 ylabel('Amplitude (v)')
 
 subplot(2,2,3)
-plot(f, abs(signal3_f) + abs(signal4_f))
+plot(f, abs(signal3_f + signal4_f))
 xlim([-2*BW 2*BW]);
 grid on;
 title('Signal 3 and 4 in Frequency Domain')
