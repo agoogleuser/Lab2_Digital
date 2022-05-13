@@ -15,17 +15,4 @@ function outputSequence = pulseShaping(bitsVector, symbol_0, symbol_1, symbolPer
             outputSequence = outputSequence + circshift(symbol_1, (i-1)*symbolPeriodPlace);
         end
     end
-    
-
-    %%not efficient but reliable.
-%     outputSequence = [];
-% 
-%     for i = bitsVector
-%         if (i == 0)
-%             outputSequence = [outputSequence symbol_0];
-%         else
-%             outputSequence = [outputSequence symbol_1];
-%         end
-%     end
-
 end
