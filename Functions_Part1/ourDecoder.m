@@ -4,11 +4,17 @@ function received_bits = ourDecoder(Rx_analog, symbol_0, symbol_1, symbolPeriod,
     [~,T_end]   = min(abs(timeVector - symbolPeriod));
     %debugging   
     %plot(timeVector,symbol_0,timeVector,symbol_1); xlim([0 symbolPeriod]);
+    counter = 1;
     for i = 1:T_end
         cmp = symbol_0(i) - symbol_1(i);
-        if (abs(cmp) > abs(Vopt) )
+        if (abs(cmp) > abs(Vopt) || ((abs(cmp) == abs(Vopt)) && counter <=10 ))
             Vopt =cmp; %Vopt here is used as a temporary value;
             Topt = i;
+            if (((abs(cmp) == abs(Vopt))))
+                counter = counter + 1;
+            else
+                counter = 1;
+            end
         end
     end
     Vopt = 0.5*(symbol_0(Topt) + symbol_1(Topt));
