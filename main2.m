@@ -12,6 +12,10 @@ Ts = 1/Fs;                          % Sampling Time
 t  = (0:Ns-1) * Ts;                 % Time Vector
 f  = (-0.5*Ns:0.5*Ns-1) * Fs/Ns;    % Frequency Vector
 
+noisePower = 10;
+bitsNum = 4000;
+n=1:bitsNum;
+
 %% par1_1
 %Creating Signal 1 and Signal 2 and converting them to frequency domain
 signal1_t = createSquareSignal(0,T,t);
@@ -44,15 +48,23 @@ signal5_t = -signal3_t;
 signal5_f = fftshift(fft(signal5_t));
 
 
-message = randi([0 1], 1, 4000);
+message = randi([0 1], 1, bitsNum);
 
 Tx_t = pulseShaping(message, signal5_t, signal3_t, T, t);
-
-Rx_t = channel_A(10, BW, f, Tx_t);
+Rx_t = channel_A(noisePower, BW, f, Tx_t);
 %% Decoding Message and Computing BER
 recvMsg = ourDecoder(Rx_t, signal5_t, signal3_t, T, t);
-recvMsg = recvMsg(1:4000);
+recvMsg = recvMsg(1:bitsNum);
 BER = ComputeBER(message, recvMsg);
+
+%% Repeating for square pulses
+
+Tx_t2 = pulseShaping(message, signal1_t, -signal1_t, T, t);
+Rx_t2 = channel_A(noisePower, BW, f, Tx_t);
+%% Decoding Message and Computing BER
+recvMsg2 = ourDecoder(Rx_t2, signal1_t, -signal3_t, T, t);
+recvMsg2 = recvMsg2(1:bitsNum);
+BER2 = ComputeBER(message, recvMsg);
 
 %% Plotting the variables
 figurenum=1;
@@ -535,9 +547,11 @@ title('Symbol for 0 Frequency Domain')
 xlabel('Frequency (Hz)')
 ylabel('Amplitude (v)')
 
-%-----sample of pulse shaping
+%-----sample of pulse shaping-----%
+
 figure(figurenum)
 figurenum=figurenum+1;
+subplot(2,1,1)
 plot(t,Tx_t,'--', t, Rx_t)
 xlim([0 15*T])
 ylim([-1.5 1.5])
@@ -547,3 +561,23 @@ xlabel('time (sec)')
 ylabel('Amplitude (v)')
 legend('Transmitted Signal', 'Received Signal')
 
+subplot(2,1,2)
+plot(t,Tx_t2,'--', t, Rx_t2)
+xlim([0 15*T])
+ylim([-1.5 1.5])
+grid on;
+title ("Pulse Shaping A random signal using Square Pulse")
+xlabel('time (sec)')
+ylabel('Amplitude (v)')
+legend('Transmitted Signal', 'Received Signal')
+
+%-Error bits in both messages-%
+
+figure(figurenum)
+figurenum=figurenum+1;
+plot(n, xor(message,recvMsg), 'bo',n, xor(message,recvMsg2)-0.1, 'ro')
+ylim([0.5 1.5])
+grid on;
+title('Error bits in Received signal')
+xlabel('position (n)');
+legend('Raised Cosine Filter', 'Square Wave');
